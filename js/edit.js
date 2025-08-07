@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(routines));
     }
 
-    function renderInterval(interval = {}) {
+    function renderInterval(interval = {}, insertAfterElement = null) {
         const intervalElement = document.createElement('div');
         intervalElement.classList.add('interval-item');
 
@@ -28,11 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="text" class="interval-title" placeholder="Title" value="${interval.title || ''}" required>
             <input type="text" class="interval-description" placeholder="Description" value="${interval.description || ''}">
             <input type="color" class="interval-color" value="${interval.color || '#ffffff'}">
+            <button type="button" class="duplicate-interval-btn">Duplicate</button>
             <button type="button" class="remove-interval-btn">Remove</button>
             <button type="button" class="move-up-btn">Up</button>
             <button type="button" class="move-down-btn">Down</button>
         `;
-        intervalsContainer.appendChild(intervalElement);
+
+        if (insertAfterElement) {
+            insertAfterElement.parentNode.insertBefore(intervalElement, insertAfterElement.nextSibling);
+        } else {
+            intervalsContainer.appendChild(intervalElement);
+        }
     }
 
     if (routineId) {
@@ -69,6 +75,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (intervalItem.nextElementSibling) {
                 intervalsContainer.insertBefore(intervalItem.nextElementSibling, intervalItem);
             }
+        } else if (target.classList.contains('duplicate-interval-btn')) {
+            const newIntervalData = {
+                duration: intervalItem.querySelector('.interval-duration').value,
+                title: intervalItem.querySelector('.interval-title').value,
+                description: intervalItem.querySelector('.interval-description').value,
+                color: intervalItem.querySelector('.interval-color').value,
+            };
+            renderInterval(newIntervalData, intervalItem);
         }
     });
 
