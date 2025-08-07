@@ -29,11 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         routines.forEach(routine => {
+            const totalTime = routine.intervals.reduce((acc, interval) => acc + Number(interval.duration), 0);
             const routineElement = document.createElement('div');
             routineElement.classList.add('routine');
             // Use routine.id which is a string. In JS, it's fine.
             routineElement.innerHTML = `
                 <h3>${routine.name}</h3>
+                <p>Total Time: ${totalTime} seconds</p>
                 <a href="timer.html?id=${routine.id}">Start</a>
                 <a href="edit.html?id=${routine.id}">Edit</a>
                 <button class="delete-btn" data-id="${routine.id}">Delete</button>

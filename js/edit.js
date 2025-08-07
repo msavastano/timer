@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const routineNameInput = document.getElementById('routine-name');
     const intervalsContainer = document.getElementById('intervals-container');
     const addIntervalButton = document.getElementById('add-interval');
+    const totalTimeSpan = document.getElementById('total-time');
 
     const LOCAL_STORAGE_KEY = 'timerRoutines';
     const urlParams = new URLSearchParams(window.location.search);
@@ -17,6 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveRoutines(routines) {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(routines));
+    }
+
+    function updateTotalTime() {
+        let totalSeconds = 0;
+        const durationInputs = intervalsContainer.querySelectorAll('.interval-duration');
+        durationInputs.forEach(input => {
+            totalSeconds += Number(input.value) || 0;
+        });
+        totalTimeSpan.textContent = totalSeconds;
     }
 
     function renderInterval(interval = {}, insertAfterElement = null) {
@@ -53,12 +63,23 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Routine not found!");
             window.location.href = 'index.html';
         }
+        updateTotalTime(); // Update time after loading
     } else {
         // Create mode - start with one empty interval
         renderInterval();
+        updateTotalTime(); // Update time for the new interval
     }
 
-    addIntervalButton.addEventListener('click', () => renderInterval());
+    addIntervalButton.addEventListener('click', () => {
+        renderInterval();
+        updateTotalTime();
+    });
+
+    intervalsContainer.addEventListener('input', (e) => {
+        if (e.target.classList.contains('interval-duration')) {
+            updateTotalTime();
+        }
+    });
 
     intervalsContainer.addEventListener('click', (e) => {
         const target = e.target;
@@ -67,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (target.classList.contains('remove-interval-btn')) {
             intervalItem.remove();
+            updateTotalTime();
         } else if (target.classList.contains('move-up-btn')) {
             if (intervalItem.previousElementSibling) {
                 intervalsContainer.insertBefore(intervalItem, intervalItem.previousElementSibling);
@@ -83,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 color: intervalItem.querySelector('.interval-color').value,
             };
             renderInterval(newIntervalData, intervalItem);
+            updateTotalTime();
         }
     });
 
