@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRoutines();
     }
 
+    function formatTime(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
     function renderRoutines() {
         const routines = getRoutines();
         routinesList.innerHTML = ''; // Clear the list
@@ -35,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Use routine.id which is a string. In JS, it's fine.
             routineElement.innerHTML = `
                 <h3>${routine.name}</h3>
-                <p>Total Time: ${totalTime} seconds</p>
+                <p>Total Time: ${formatTime(totalTime)}</p>
                 <a href="timer.html?id=${routine.id}">Start</a>
                 <a href="edit.html?id=${routine.id}">Edit</a>
                 <button class="delete-btn" data-id="${routine.id}">Delete</button>

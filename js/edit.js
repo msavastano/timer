@@ -20,13 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(routines));
     }
 
+    function formatTime(totalSeconds) {
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
     function updateTotalTime() {
         let totalSeconds = 0;
         const durationInputs = intervalsContainer.querySelectorAll('.interval-duration');
         durationInputs.forEach(input => {
             totalSeconds += Number(input.value) || 0;
         });
-        totalTimeSpan.textContent = totalSeconds;
+        totalTimeSpan.textContent = formatTime(totalSeconds);
     }
 
     function renderInterval(interval = {}, insertAfterElement = null) {
