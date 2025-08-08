@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerTitle = document.getElementById('timer-title');
     const timerDescription = document.getElementById('timer-description');
     const timerEl = document.getElementById('timer');
-    const totalRoutineTimeEl = document.getElementById('total-routine-time');
+    const progressBar = document.getElementById('progress-bar');
     const startPauseBtn = document.getElementById('start-pause');
     const resetBtn = document.getElementById('reset');
 
@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timeLeftInInterval = 0;
     let timerId = null; // To store setInterval ID
     let isPaused = true;
+    let totalRoutineTime = 0;
 
     // Constants
     const LOCAL_STORAGE_KEY = 'timerRoutines';
@@ -29,6 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
+    function updateProgressBar() {
+        const timeElapsedInCurrentInterval = currentRoutine.intervals[currentIntervalIndex].duration - timeLeftInInterval;
+        const timeElapsedInPreviousIntervals = currentRoutine.intervals.slice(0, currentIntervalIndex).reduce((acc, interval) => acc + Number(interval.duration), 0);
+        const totalTimeElapsed = timeElapsedInPreviousIntervals + timeElapsedInCurrentInterval;
+        const percentage = (totalTimeElapsed / totalRoutineTime) * 100;
+        progressBar.style.width = `${percentage}%`;
+    }
+
     function updateDisplay() {
         if (!currentRoutine) return;
 
@@ -37,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timerDescription.textContent = interval.description;
         document.body.style.backgroundColor = interval.color;
         timerEl.textContent = formatTime(timeLeftInInterval);
+        updateProgressBar();
     }
 
     function startTimer() {
@@ -49,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (timeLeftInInterval > 0) {
                 timeLeftInInterval--;
                 timerEl.textContent = formatTime(timeLeftInInterval);
+                updateProgressBar();
             } else {
                 // Move to next interval
                 currentIntervalIndex++;
@@ -62,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     timerId = null;
                     isPaused = true;
                     startPauseBtn.textContent = 'Start';
+                    progressBar.style.width = '100%';
                     alert('Routine complete!');
                     // Optionally reset to the beginning
                     resetTimer();
@@ -124,8 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         timeLeftInInterval = currentRoutine.intervals[0].duration;
-        const totalRoutineTime = currentRoutine.intervals.reduce((acc, interval) => acc + Number(interval.duration), 0);
-        totalRoutineTimeEl.textContent = `Total Time: ${formatTime(totalRoutineTime)}`;
+        totalRoutineTime = currentRoutine.intervals.reduce((acc, interval) => acc + Number(interval.duration), 0);
         updateDisplay();
     }
 
