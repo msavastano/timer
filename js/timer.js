@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerTitle = document.getElementById('timer-title');
     const timerDescription = document.getElementById('timer-description');
     const timerEl = document.getElementById('timer');
+    const totalRoutineTimeEl = document.getElementById('total-routine-time');
     const startPauseBtn = document.getElementById('start-pause');
     const resetBtn = document.getElementById('reset');
 
@@ -123,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         timeLeftInInterval = currentRoutine.intervals[0].duration;
+        const totalRoutineTime = currentRoutine.intervals.reduce((acc, interval) => acc + Number(interval.duration), 0);
+        totalRoutineTimeEl.textContent = `Total Time: ${formatTime(totalRoutineTime)}`;
         updateDisplay();
     }
 
